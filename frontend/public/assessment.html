@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KarmaSkill — AI Assessment &amp; Quiz</title>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/karmaskill.css">
+  <style>
+    .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    @media (max-width: 900px) { .metrics-grid { grid-template-columns: 1fr; } }
+    .metric-card {
+      background: var(--surface-container-lowest); border: 1px solid #e2e8f0;
+      border-radius: var(--radius); padding: 1rem; box-shadow: var(--shadow);
+    }
+    .metric-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .metric-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--on-surface-variant);
+    }
+    .metric-icon { color: var(--primary); width: 16px; height: 16px; }
+    .metric-value { font-size: 1.5rem; font-weight: 700; color: var(--on-surface); }
+    .metric-value .unit { font-size: 1rem; font-weight: 400; color: var(--on-surface-variant); }
+    .metric-foot { font-size: 11px; color: var(--secondary); font-weight: 500; margin-top: 4px; }
+    .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 700px) { .config-grid { grid-template-columns: 1fr; } }
+    .select-wrap select {
+      width: 100%; padding: 0.75rem 1rem;
+      background: var(--surface-container);
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--radius);
+      font-size: 0.875rem; color: var(--on-surface);
+      font-family: inherit; cursor: pointer;
+    }
+    .select-wrap select:focus {
+      outline: none; border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-container);
+    }
+    .time-note { font-size: 11px; color: var(--on-surface-variant); margin-top: 4px; }
+    .time-note strong { color: var(--primary); }
+    .error-box {
+      background: var(--error-container); border: 1px solid var(--error);
+      color: var(--on-surface); border-radius: var(--radius);
+      padding: 0.75rem 1rem; font-size: 13px; margin-top: 1rem;
+    }
+    .error-box strong { color: var(--error); }
+    .error-box.hide { display: none; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="left">
+      <span>भारत सरकार | Government of India</span>
+    </div>
+    <div class="right">
+      <span class="font-bold" style="display:flex;gap:2px;">
+        <button type="button">A-</button>
+        <button type="button" style="font-weight:700;">A</button>
+        <button type="button">A+</button>
+      </span>
+      <span class="sep">|</span>
+      <span>English</span>
+      <span class="sep">/</span>
+      <button type="button">हिन्दी</button>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <div class="brand">
+          <div class="brand-title">KarmaSkill AI</div>
+          <div class="brand-sub">Public Sector Competency &amp; Learning</div>
+        </div>
+        <nav class="nav" aria-label="Primary">
+          <a href="/index.html">Employee Dashboard</a>
+          <a class="active" href="/assessment.html">AI Assessment &amp; Quiz</a>
+          <a href="/progress.html">Progress</a>
+        </nav>
+      </div>
+      <div class="header-right">
+        <div class="user-info">
+          <span class="user-name" id="userName">—</span>
+          <span class="user-cadre" id="userCadre">Cadre ID: —</span>
+        </div>
+        <button class="btn-logout" data-logout type="button" title="Logout">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          <span>Logout</span>
+        </button>
+        <div class="avatar" id="avatar">?</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="page-inner">
+      <div class="page-header">
+        <span class="page-eyebrow">AI Assessment Engine</span>
+        <h1 class="page-title">Generate &amp; Take an Assessment</h1>
+        <p class="page-subtitle">AI-generated MCQs are drawn from your assigned learning material and mapped to a competency.</p>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-head">
+            <span class="metric-label">Proctoring</span>
+            <svg class="metric-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          </div>
+          <div class="metric-value">Fullscreen</div>
+          <div class="metric-foot">Anti-cheat enforced — exiting fullscreen is logged</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-head">
+            <span class="metric-label">Scoring</span>
+            <svg class="metric-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div class="metric-value">Auto<span class="unit">-graded</span></div>
+          <div class="metric-foot">Results update your competency level</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2 class="card-title">Assessment Configuration</h2>
+            <p class="card-sub">Choose a competency and the number of questions, then start.</p>
+          </div>
+          <span class="badge blue">AI-Generated</span>
+        </div>
+        <div class="card-body">
+          <div class="config-grid">
+            <div class="field">
+              <label for="competencySelect">Competency</label>
+              <div class="select-wrap">
+                <select id="competencySelect"></select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="questionCount">Number of Questions</label>
+              <div class="select-wrap">
+                <select id="questionCount">
+                  <option value="5">5 questions</option>
+                  <option value="10">10 questions</option>
+                  <option value="20" selected>20 questions</option>
+                </select>
+              </div>
+              <div class="time-note">Time allotted: <strong id="timeNote">35:00</strong> (1.75 × 20)</div>
+            </div>
+          </div>
+          <div style="margin-top:1.25rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <button class="btn-primary" id="startBtn" type="button">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Generate &amp; Start Assessment
+            </button>
+            <a class="btn-secondary" href="/quiz.html?quizId=1">Open existing quiz (ID)</a>
+          </div>
+          <div class="error-box hide" id="errorBox"></div>
+        </div>
+      </div>
+
+      <div class="site-footer">
+        <div class="footer-text">Official Statistical &amp; Competency Framework © 2025 KarmaSkill AI.</div>
+        <div class="footer-links">
+          <span>WCAG 2.1 Level AAA Compliant</span>
+          <span>•</span>
+          <span>DPDP Aligned</span>
+          <span>•</span>
+          <span>Gov.in Sovereign Infrastructure</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/app.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      var stored = KarmaApp.requireAuth();
+      if (!stored) return;
+
+      KarmaApp.renderUserHeader(stored);
+
+      var competencySelect = document.getElementById('competencySelect');
+      var questionCount = document.getElementById('questionCount');
+      var timeNote = document.getElementById('timeNote');
+      var startBtn = document.getElementById('startBtn');
+      var errorBox = document.getElementById('errorBox');
+
+      function fmt(seconds) {
+        var m = Math.floor(seconds / 60);
+        var s = seconds % 60;
+        return m + ':' + String(s).padStart(2, '0');
+      }
+
+      function updateTimeNote() {
+        var n = parseInt(questionCount.value, 10);
+        timeNote.textContent = fmt(Math.round(n * 1.75 * 60));
+        var note = timeNote.parentElement;
+        note.innerHTML = 'Time allotted: <strong id="timeNote">' + fmt(Math.round(n * 1.75 * 60)) + '</strong> (1.75 × ' + n + ')';
+        timeNote = document.getElementById('timeNote');
+      }
+
+      function showError(msg) {
+        errorBox.textContent = msg;
+        errorBox.classList.remove('hide');
+      }
+
+      function hideError() {
+        errorBox.classList.add('hide');
+      }
+
+      questionCount.addEventListener('change', updateTimeNote);
+      updateTimeNote();
+
+      // Load competencies; fall back to a static list if the backend is offline
+      KarmaApp.authFetch('/competencies/employee/1')
+        .then(function (list) {
+          competencySelect.innerHTML = list.map(function (c) {
+            return '<option value="' + c.competency.id + '">' +
+              KarmaApp.escapeHtml(c.competency.name) +
+              ' — current L' + Math.floor(c.current_level / 25 + 1) +
+              ' / required L' + Math.floor(c.required_level / 25 + 1) +
+              '</option>';
+          }).join('');
+        })
+        .catch(function () {
+          competencySelect.innerHTML =
+            '<option value="1">Data Analysis (offline demo)</option>' +
+            '<option value="2">Regulatory Compliance (offline demo)</option>' +
+            '<option value="3">Public Policy (offline demo)</option>';
+        });
+
+      startBtn.addEventListener('click', function () {
+        hideError();
+        var competencyId = competencySelect.value;
+        var n = parseInt(questionCount.value, 10);
+        if (!competencyId) {
+          showError('Please select a competency first.');
+          return;
+        }
+        startBtn.disabled = true;
+        KarmaApp.authFetch('/assessments/generate', {
+          method: 'POST',
+          body: JSON.stringify({
+            employee_id: 1,
+            competency_id: parseInt(competencyId, 10),
+            number_of_questions: n
+          })
+        }).then(function (data) {
+          location.href = '/quiz.html?quizId=' + data.quiz_id;
+        }).catch(function (err) {
+          showError('Could not generate the assessment. ' + (err.message || '') +
+            ' You can still open an existing quiz by ID below.');
+          startBtn.disabled = false;
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

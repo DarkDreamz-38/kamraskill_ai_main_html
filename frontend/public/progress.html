@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KarmaSkill — My Progress</title>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/karmaskill.css">
+  <style>
+    .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    @media (max-width: 1024px) { .metrics-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .metrics-grid { grid-template-columns: 1fr; } }
+    .metric-card {
+      background: var(--surface-container-lowest); border: 1px solid #e2e8f0;
+      border-radius: var(--radius); padding: 1rem; box-shadow: var(--shadow);
+    }
+    .metric-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .metric-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--on-surface-variant);
+    }
+    .metric-icon { color: var(--primary); width: 16px; height: 16px; }
+    .metric-icon.amber { color: #d97706; }
+    .metric-icon.green { color: var(--secondary); }
+    .metric-value { font-size: 1.5rem; font-weight: 700; color: var(--on-surface); }
+    .metric-value .unit { font-size: 1rem; font-weight: 400; color: var(--on-surface-variant); }
+    .metric-foot { font-size: 11px; color: var(--secondary); font-weight: 500; margin-top: 4px; }
+    .metric-foot.amber { color: #b45309; }
+
+    /* Competency bars */
+    .comp-row { padding: 14px 1.25rem; border-bottom: 1px solid #f1f5f9; }
+    .comp-row:last-child { border-bottom: none; }
+    .comp-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .comp-name { font-size: 13px; font-weight: 600; color: var(--on-surface); }
+    .comp-vals { font-size: 11.5px; color: var(--on-surface-variant); }
+    .comp-vals strong.met { color: var(--primary); }
+    .comp-track { position: relative; height: 8px; background: #eef2ff; border-radius: 9999px; overflow: hidden; }
+    .comp-fill { height: 100%; border-radius: 9999px; transition: width 0.6s ease; }
+    .comp-fill.ok { background: var(--secondary); }
+    .comp-fill.gap { background: #d97706; }
+    .comp-mark {
+      position: absolute; top: -3px; width: 2px; height: 14px;
+      background: var(--on-primary-fixed); border-radius: 2px;
+    }
+
+    /* History table */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      padding: 8px 12px; text-align: left; font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--on-surface-variant); border-bottom: 1px solid #f1f5f9;
+    }
+    th.text-center { text-align: center; }
+    td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+    tr:hover td { background: #f8fafc; }
+    .pct { font-weight: 700; }
+    .pct.good { color: var(--secondary); }
+    .pct.mid { color: #b45309; }
+    .pct.bad { color: var(--error); }
+    .lvl { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+    .lvl.l-default { background: #f1f5f9; color: #475569; }
+    .lvl.l-blue { background: var(--primary-container); color: var(--on-primary-container); }
+
+    /* Learning cards */
+    .learn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    @media (max-width: 900px) { .learn-grid { grid-template-columns: 1fr; } }
+    .learn-card { display: flex; flex-direction: column; border-radius: 14px; }
+    .learn-body { padding: 1rem 1.25rem 1.25rem; display: flex; flex-direction: column; flex: 1; }
+    .learn-title { font-size: 0.925rem; font-weight: 700; color: var(--on-surface); margin-bottom: 4px; }
+    .learn-desc { font-size: 12.5px; color: var(--on-surface-variant); line-height: 1.55; margin-bottom: 10px; }
+    .learn-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .learn-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding-top: 12px; border-top: 1px solid #f1f5f9; }
+    .learn-foot .stat .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--on-surface-variant); display: block; }
+    .learn-foot .stat .val { font-size: 12.5px; font-weight: 700; color: var(--on-surface); }
+    .mini-progress { margin-bottom: 12px; }
+    .mini-progress .track { height: 5px; background: #eef2ff; border-radius: 9999px; overflow: hidden; }
+    .mini-progress .fill { height: 100%; background: var(--primary); border-radius: 9999px; }
+    .mini-progress .lbl { font-size: 10.5px; color: var(--on-surface-variant); margin-top: 4px; text-align: right; }
+    .readiness-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 14px; background: var(--surface-container-lowest);
+      border: 1px solid #e2e8f0; border-radius: var(--radius);
+      box-shadow: var(--shadow); text-align: left;
+    }
+    .readiness-pill .label {
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--on-surface-variant); font-weight: 600;
+    }
+    .readiness-pill .value { font-size: 1rem; font-weight: 700; color: var(--primary); }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; align-items: start; }
+    @media (max-width: 980px) { .two-col { grid-template-columns: 1fr; } }
+    .stack { display: flex; flex-direction: column; gap: 1.5rem; }
+    .trend-wrap { padding: 4px 0 0; }
+    .trend-svg { width: 100%; height: auto; display: block; }
+    .trend-foot { display: flex; gap: 1.5rem; margin-top: 10px; padding-top: 10px; border-top: 1px solid #f1f5f9; }
+    .trend-foot .stat .lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--on-surface-variant); display: block; }
+    .trend-foot .stat .val { font-size: 14px; font-weight: 700; color: var(--on-surface); }
+    .empty-note { padding: 24px; text-align: center; color: var(--on-surface-variant); font-size: 13px; }
+    .radar-legend { display: flex; gap: 14px; margin-top: 8px; }
+    .radar-legend .item { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--on-surface-variant); }
+    .radar-legend .sw { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="left">
+      <span>भारत सरकार | Government of India</span>
+    </div>
+    <div class="right">
+      <span class="font-bold" style="display:flex;gap:2px;">
+        <button type="button">A-</button>
+        <button type="button" style="font-weight:700;">A</button>
+        <button type="button">A+</button>
+      </span>
+      <span class="sep">|</span>
+      <span>English</span>
+      <span class="sep">/</span>
+      <button type="button">हिन्दी</button>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <div class="brand">
+          <div class="brand-title">KarmaSkill AI</div>
+          <div class="brand-sub">Public Sector Competency &amp; Learning</div>
+        </div>
+        <nav class="nav" aria-label="Primary">
+          <a href="/index.html">Employee Dashboard</a>
+          <a href="/assessment.html">AI Assessment &amp; Quiz</a>
+          <a class="active" href="/progress.html">Progress</a>
+        </nav>
+      </div>
+      <div class="header-right">
+        <div class="user-info">
+          <span class="user-name" id="userName">—</span>
+          <span class="user-cadre" id="userCadre">Cadre ID: —</span>
+        </div>
+        <button class="btn-logout" data-logout type="button" title="Logout">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          <span>Logout</span>
+        </button>
+        <div class="avatar" id="avatar">?</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="page-inner">
+      <div class="page-header">
+        <span class="page-eyebrow">Learning &amp; Competency Tracker</span>
+        <h1 class="page-title">My Progress</h1>
+        <p class="page-subtitle" id="pageSub">Track assessments, competency growth, and continue your learning modules.</p>
+        <div class="header-actions">
+          <div class="readiness-pill">
+            <span class="label">Competencies Tracked</span>
+            <span class="value" id="trackedCount">—</span>
+          </div>
+          <div class="readiness-pill">
+            <span class="label">Assessments Taken</span>
+            <span class="value" id="takenCount">—</span>
+          </div>
+          <a class="btn-primary" href="/assessment.html">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+            New Assessment
+          </a>
+        </div>
+        <div class="error-box hide" id="errorBox"
+             style="display:none;background:var(--error-container);border:1px solid var(--error);color:var(--on-surface);border-radius:var(--radius);padding:0.75rem 1rem;font-size:13px;margin-top:1rem;">
+        </div>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-head">
+            <span class="metric-label">Avg. Latest Score</span>
+            <svg class="metric-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div class="metric-value" id="avgLatest">—</div>
+          <div class="metric-foot">Across your latest attempts</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-head">
+            <span class="metric-label">Competencies Met</span>
+            <svg class="metric-icon green" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          </div>
+          <div class="metric-value" id="metCount" style="color:var(--secondary);">—</div>
+          <div class="metric-foot" id="metFoot">At or above mandated level</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-head">
+            <span class="metric-label">Active Gaps</span>
+            <svg class="metric-icon amber" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M5 19h14a2 2 0 001.84-2.75L13.74 4.5a2 2 0 00-3.48 0L3.16 16.25A2 2 0 005 19z"/></svg>
+          </div>
+          <div class="metric-value" id="gapCount" style="color:#b45309;">—</div>
+          <div class="metric-foot amber">Requiring learning action</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-head">
+            <span class="metric-label">Modules In Progress</span>
+            <svg class="metric-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          </div>
+          <div class="metric-value" id="moduleCount">—</div>
+          <div class="metric-foot">Recommended learning paths</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="stack">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h2 class="card-title">Competency Progress</h2>
+                <p class="card-sub">Current level vs. mandated level — the dark marker is the target.</p>
+              </div>
+              <span class="badge blue" id="compBadge">—</span>
+            </div>
+            <div id="compList"><div class="empty-note">Loading…</div></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h2 class="card-title">Assessment History</h2>
+                <p class="card-sub">Every recorded attempt, oldest to newest.</p>
+              </div>
+              <span class="badge neutral" id="historyBadge">—</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Competency</th>
+                    <th class="text-center">Score</th>
+                    <th class="text-center">Result</th>
+                    <th class="text-center">Level</th>
+                  </tr>
+                </thead>
+                <tbody id="historyBody">
+                  <tr><td colspan="5" style="text-align:center;color:var(--on-surface-variant);padding:24px;">Loading…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h2 class="card-title">Score Progression</h2>
+                <p class="card-sub">Percentage across all attempts — the dashed line marks the 75% pass bar.</p>
+              </div>
+              <span class="badge blue" id="trendBadge">—</span>
+            </div>
+            <div class="card-body trend-wrap" id="trendWrap">
+              <div class="empty-note">Loading…</div>
+            </div>
+            <div class="card-body trend-foot" id="trendFoot" style="padding-top:10px;border-top:1px solid #f1f5f9;">
+              <div class="stat"><span class="lbl">Highest</span><span class="val" id="trendHigh" style="color:var(--secondary);">—</span></div>
+              <div class="stat"><span class="lbl">Latest</span><span class="val" id="trendLatest">—</span></div>
+              <div class="stat"><span class="lbl">Attempts</span><span class="val" id="trendCount">—</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stack">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h2 class="card-title">AI Learning Recommendations</h2>
+                <p class="card-sub">Recommended modules and materials matched to your gaps.</p>
+              </div>
+              <span class="badge amber">AI Ranked</span>
+            </div>
+            <div class="card-body learn-grid" id="learnGrid">
+              <div class="empty-note" style="grid-column:1/-1;">Loading…</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title serif">Progress Notes</h3>
+              <p class="card-sub" style="margin-bottom:0.75rem;">How your latest results translate to action.</p>
+              <div id="notesList" style="display:flex;flex-direction:column;gap:10px;">
+                <div class="empty-note">Loading…</div>
+              </div>
+            </div>
+            <div class="card-body" style="border-top:1px solid #f1f5f9;display:flex;gap:8px;flex-wrap:wrap;">
+              <a class="btn-secondary" href="/quiz.html?quizId=1">Practice Quiz</a>
+              <a class="btn-primary" href="/assessment.html">Take Assessment</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="site-footer">
+        <div class="footer-text">Official Statistical &amp; Competency Framework © 2025 KarmaSkill AI.</div>
+        <div class="footer-links">
+          <span>WCAG 2.1 Level AAA Compliant</span>
+          <span>•</span>
+          <span>DPDP Aligned</span>
+          <span>•</span>
+          <span>Gov.in Sovereign Infrastructure</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/app.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      var stored = KarmaApp.requireAuth();
+      if (!stored) return;
+
+      var EMP = (stored && stored.id) || 1;
+      KarmaApp.renderUserHeader(stored);
+      var passThreshold = 75;
+
+      function el(id) { return document.getElementById(id); }
+      function levelOf(score) { return Math.floor(score / 25) + 1; }
+      function pctClass(p) { return p >= passThreshold ? 'good' : (p >= 50 ? 'mid' : 'bad'); }
+      function fmtDate(iso) {
+        try {
+          var d = new Date(iso);
+          if (isNaN(d)) return '—';
+          return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        } catch (e) { return '—'; }
+      }
+
+      function showError(msg) {
+        var box = el('errorBox');
+        box.textContent = msg;
+        box.style.display = 'block';
+      }
+
+      function renderCompetencies(comps) {
+        var list = el('compList');
+        if (!comps.length) {
+          list.innerHTML = '<div class="empty-note">No competency data available yet. Take an assessment to get started.</div>';
+          return;
+        }
+        list.innerHTML = comps.map(function (c) {
+          var cur = c.current_level || 0;
+          var req = c.required_level || 0;
+          var met = cur >= req;
+          var fillW = Math.min(100, (cur / Math.max(req, 1)) * 100 * (req / 100));
+          // fill width as % of bar; bar represents 0-100 scale, marker at req%
+          var width = Math.min(100, cur);
+          var markLeft = Math.min(100, req);
+          return '<div class="comp-row">' +
+            '<div class="comp-top">' +
+              '<span class="comp-name">' + KarmaApp.escapeHtml(c.competency.name) + '</span>' +
+              '<span class="comp-vals"><strong class="met">' + Math.round(cur) + '%</strong> / ' + Math.round(req) + '% required' +
+                (met ? ' · <span style="color:var(--secondary);font-weight:700;">Met ✓</span>' : ' · <span style="color:#b45309;font-weight:700;">' + Math.round(req - cur) + ' to go</span>') +
+              '</span>' +
+            '</div>' +
+            '<div class="comp-track">' +
+              '<div class="comp-fill ' + (met ? 'ok' : 'gap') + '" style="width:' + width + '%;"></div>' +
+              '<div class="comp-mark" style="left:calc(' + markLeft + '% - 1px);" title="Required level"></div>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+
+        var met = comps.filter(function (c) { return (c.current_level || 0) >= (c.required_level || 0); }).length;
+        el('metCount').textContent = met;
+        el('gapCount').textContent = comps.length - met;
+        el('compBadge').textContent = met + ' of ' + comps.length + ' met';
+      }
+
+      function renderTrend(assessments) {
+        var wrap = document.getElementById('trendWrap');
+        var ordered = assessments.slice().sort(function (a, b) { return a.id - b.id; });
+        document.getElementById('trendBadge').textContent = ordered.length + ' attempts';
+        document.getElementById('trendCount').textContent = String(ordered.length);
+
+        if (ordered.length < 2) {
+          wrap.innerHTML = '<div class="empty-note">Take at least two assessments to unlock the progression chart.</div>';
+          document.getElementById('trendHigh').textContent = ordered.length ? Math.round(ordered[0].percentage || 0) + '%' : '—';
+          document.getElementById('trendLatest').textContent = ordered.length ? Math.round(ordered[ordered.length - 1].percentage || 0) + '%' : '—';
+          return;
+        }
+
+        var W = 560, H = 190, PADL = 34, PADR = 14, PADT = 14, PADB = 28;
+        var iw = W - PADL - PADR, ih = H - PADT - PADB;
+        var vals = ordered.map(function (a) { return Math.max(0, Math.min(100, a.percentage || 0)); });
+        var pass = 75;
+
+        function x(i) { return PADL + (ordered.length === 1 ? iw / 2 : (i * iw / (ordered.length - 1))); }
+        function y(v) { return PADT + ih - (v / 100) * ih; }
+
+        var gridLines = [0, 25, 50, 75, 100].map(function (v) {
+          return '<line x1="' + PADL + '" y1="' + y(v) + '" x2="' + (W - PADR) + '" y2="' + y(v) + '" stroke="#eef2f9" stroke-width="1"/>' +
+            '<text x="' + (PADL - 8) + '" y="' + (y(v) + 4) + '" font-size="10" fill="#8a94a8" text-anchor="end">' + v + '</text>';
+        }).join('');
+
+        var passLine = '<line x1="' + PADL + '" y1="' + y(pass) + '" x2="' + (W - PADR) + '" y2="' + y(pass) + '" stroke="#ba1a1a" stroke-width="1.25" stroke-dasharray="5 4" opacity="0.55"/>' +
+          '<text x="' + (W - PADR) + '" y="' + (y(pass) - 6) + '" font-size="10" font-weight="700" fill="#ba1a1a" text-anchor="end">Pass 75%</text>';
+
+        var linePath = vals.map(function (v, i) { return (i === 0 ? 'M' : 'L') + x(i) + ' ' + y(v); }).join(' ');
+        var areaPath = linePath + ' L' + x(vals.length - 1) + ' ' + y(0) + ' L' + x(0) + ' ' + y(0) + ' Z';
+
+        var dots = vals.map(function (v, i) {
+          var isLast = i === vals.length - 1;
+          var col = v >= pass ? '#006a61' : (v >= 50 ? '#d97706' : '#ba1a1a');
+          return '<circle cx="' + x(i) + '" cy="' + y(v) + '" r="' + (isLast ? 5 : 4) + '" fill="#ffffff" stroke="' + col + '" stroke-width="2.5"/>' +
+            '<text x="' + x(i) + '" y="' + (y(v) - 10) + '" font-size="10.5" font-weight="700" fill="' + col + '" text-anchor="middle">' + Math.round(v) + '%</text>' +
+            '<text x="' + x(i) + '" y="' + (H - 8) + '" font-size="10" fill="#8a94a8" text-anchor="middle">#' + (i + 1) + '</text>';
+        }).join('');
+
+        wrap.innerHTML =
+          '<svg class="trend-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Assessment score progression chart">' +
+            '<defs><linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">' +
+              '<stop offset="0%" stop-color="#00288e" stop-opacity="0.16"/>' +
+              '<stop offset="100%" stop-color="#00288e" stop-opacity="0.01"/>' +
+            '</linearGradient></defs>' +
+            gridLines + passLine +
+            '<path d="' + areaPath + '" fill="url(#trendFill)"/>' +
+            '<path d="' + linePath + '" fill="none" stroke="#00288e" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>' +
+            dots +
+          '</svg>';
+
+        var high = Math.round(Math.max.apply(null, vals));
+        var latest = Math.round(vals[vals.length - 1]);
+        document.getElementById('trendHigh').textContent = high + '%';
+        document.getElementById('trendLatest').textContent = latest + '%';
+      }
+
+      function renderHistory(assessments, competencies) {
+        var body = el('historyBody');
+        var compName = {};
+        (competencies || []).forEach(function (c) { compName[c.competency.id] = c.competency.name; });
+
+        if (!assessments.length) {
+          body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--on-surface-variant);padding:24px;">No assessments recorded yet.</td></tr>';
+          el('historyBadge').textContent = '0 attempts';
+          return;
+        }
+
+        var ordered = assessments.slice().sort(function (a, b) { return a.id - b.id; });
+        body.innerHTML = ordered.map(function (a, i) {
+          var p = Math.round(a.percentage || 0);
+          var cls = pctClass(p);
+          var name = compName[a.competency_id] || ('Competency #' + a.competency_id);
+          return '<tr>' +
+            '<td>' + (i + 1) + '</td>' +
+            '<td><div style="font-weight:600;">' + KarmaApp.escapeHtml(name) + '</div>' +
+              '<div style="font-size:11px;color:var(--on-surface-variant);">Attempt ' + (i + 1) + ' · ' + a.score + '/' + a.total_questions + '</div></td>' +
+            '<td class="text-center"><span class="pct ' + cls + '">' + p + '%</span></td>' +
+            '<td class="text-center">' +
+              (p >= passThreshold
+                ? '<span class="badge green">Pass</span>'
+                : '<span class="badge red">Below ' + passThreshold + '%</span>') +
+            '</td>' +
+            '<td class="text-center"><span class="lvl ' + (p >= 75 ? 'l-blue' : 'l-default') + '">L' + levelOf(p) + '</span></td>' +
+          '</tr>';
+        }).join('');
+        el('historyBadge').textContent = ordered.length + ' attempts';
+
+        var latestByComp = {};
+        ordered.forEach(function (a) { latestByComp[a.competency_id] = a; });
+        var latest = Object.keys(latestByComp).map(function (k) { return latestByComp[k]; });
+        var avg = latest.length
+          ? Math.round(latest.reduce(function (s, a) { return s + (a.percentage || 0); }, 0) / latest.length)
+          : 0;
+        el('avgLatest').textContent = avg ? avg + '%' : '—';
+        el('takenCount').textContent = ordered.length;
+      }
+
+      function renderRecommendations(recs) {
+        var grid = el('learnGrid');
+        if (!recs || !recs.length) {
+          grid.innerHTML = '<div class="empty-note" style="grid-column:1/-1;">No recommendations right now — your competencies meet the mandate. 🎉</div>';
+          el('moduleCount').textContent = '0';
+          return;
+        }
+
+        grid.innerHTML = recs.map(function (r) {
+          var isCourse = r.type === 'course';
+          var href = isCourse ? '/assessment.html?competencyId=1' : '/assessment.html?competencyId=1';
+          var meta = '';
+          if (isCourse) {
+            meta = '<span class="badge blue">' + KarmaApp.escapeHtml(String(r.difficulty || 'Course')) + '</span>' +
+              '<span class="badge neutral">' + KarmaApp.escapeHtml(String(r.duration || '')) + '</span>';
+          } else {
+            meta = '<span class="badge blue">Learning Material</span>' +
+              '<span class="badge neutral">' + (r.pages || 0) + ' pages</span>';
+          }
+          var progressPct = Math.min(100, Math.round(((r.current_level || 0) / Math.max(r.required_level || 100, 1)) * 100));
+          return '<div class="card learn-card">' +
+            '<div class="learn-body">' +
+              '<div class="learn-title">' + KarmaApp.escapeHtml(r.title) + '</div>' +
+              '<div class="learn-desc">' + KarmaApp.escapeHtml(r.reason || '') + '</div>' +
+              '<div class="learn-meta">' + meta + '<span class="badge ' + (r.priority === 'High' ? 'red' : r.priority === 'Medium' ? 'amber' : 'neutral') + '">' + KarmaApp.escapeHtml(r.priority || '') + ' priority</span></div>' +
+              '<div class="mini-progress">' +
+                '<div class="track"><div class="fill" style="width:' + progressPct + '%;"></div></div>' +
+                '<div class="lbl">' + progressPct + '% of required level</div>' +
+              '</div>' +
+              '<div class="learn-foot">' +
+                '<div class="stat"><span class="lbl">Closes gap in</span><span class="val">' + KarmaApp.escapeHtml(r.competency || '') + '</span></div>' +
+                '<a class="btn-primary" href="' + href + '" style="padding:6px 12px;font-size:12px;border-radius:9px;">Continue Module</a>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+
+        el('moduleCount').textContent = String(recs.length);
+      }
+
+      function renderNotes(comps, assessments, recs) {
+        var notes = [];
+        var met = comps.filter(function (c) { return (c.current_level || 0) >= (c.required_level || 0); });
+        var gaps = comps.filter(function (c) { return (c.current_level || 0) < (c.required_level || 0); });
+
+        if (gaps.length) {
+          var worst = gaps.slice().sort(function (a, b) { return (b.required_level - b.current_level) - (a.required_level - a.current_level); })[0];
+          notes.push('<strong>' + KarmaApp.escapeHtml(worst.competency.name) + '</strong> has the largest gap (' +
+            Math.round(worst.required_level - worst.current_level) + ' points). The recommended module below targets it first.');
+        }
+        if (met.length) {
+          notes.push('You have met the mandate for <strong>' + met.map(function (c) { return KarmaApp.escapeHtml(c.competency.name); }).join(', ') + '</strong> — keep them current with periodic practice quizzes.');
+        }
+        if (assessments.length) {
+          var last = assessments.slice().sort(function (a, b) { return b.id - a.id; })[0];
+          notes.push('Your most recent attempt scored <strong>' + Math.round(last.percentage || 0) + '%</strong>. ' +
+            ((last.percentage || 0) >= passThreshold ? 'Certified result — well done.' : 'Score above ' + passThreshold + '% on a retake to certify.'));
+        }
+        if (recs && recs.length) {
+          notes.push('<strong>' + recs.length + ' learning recommendation' + (recs.length > 1 ? 's' : '') + '</strong> are queued, ranked by AI priority score.');
+        }
+        if (!notes.length) {
+          notes.push('Take your first assessment to unlock progress tracking.');
+        }
+
+        el('notesList').innerHTML = notes.map(function (n) {
+          return '<div style="display:flex;gap:8px;font-size:12.5px;line-height:1.55;color:var(--on-surface-variant);">' +
+            '<span style="color:var(--primary);flex-shrink:0;">▸</span><span>' + n + '</span></div>';
+        }).join('');
+      }
+
+      // Load everything in parallel
+      Promise.all([
+        KarmaApp.authFetch('/competencies/employee/' + EMP),
+        KarmaApp.authFetch('/assessments/employee/' + EMP),
+        KarmaApp.authFetch('/recommendations/employee/' + EMP)
+      ]).then(function (results) {
+        var comps = results[0] || [];
+        var assessments = results[1] || [];
+        var recs = (results[2] && results[2].recommendations) || [];
+
+        el('trackedCount').textContent = comps.length;
+        renderCompetencies(comps);
+        renderHistory(assessments, comps);
+        renderTrend(assessments);
+        renderRecommendations(recs);
+        renderNotes(comps, assessments, recs);
+      }).catch(function (err) {
+        showError('Could not load progress data. ' + (err.message || '') + ' — ensure the backend is running at http://localhost:8000.');
+      });
+    })();
+  </script>
+</body>
+</html>

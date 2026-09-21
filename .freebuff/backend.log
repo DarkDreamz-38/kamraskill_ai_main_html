@@ -1,0 +1,99 @@
+INFO:     127.0.0.1:65468 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65483 - "OPTIONS /employees/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65484 - "OPTIONS /employees/1/gap-analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65485 - "OPTIONS /recommendations/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65486 - "OPTIONS /competencies/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65483 - "GET /employees/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65484 - "GET /employees/1/gap-analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65486 - "GET /competencies/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65485 - "GET /recommendations/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65488 - "GET /employees/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65489 - "GET /employees/1/gap-analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65489 - "GET /competencies/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65488 - "GET /recommendations/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65493 - "GET /employees/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65493 - "GET /recommendations/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65493 - "GET /recommendations/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54050 - "GET /employees/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54051 - "GET /employees/1/gap-analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54052 - "GET /recommendations/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54053 - "GET /competencies/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54208 - "OPTIONS /employees/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54209 - "OPTIONS /employees/1/gap-analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54210 - "OPTIONS /recommendations/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54211 - "OPTIONS /competencies/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54208 - "GET /employees/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54209 - "GET /competencies/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54210 - "GET /employees/1/gap-analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54211 - "GET /recommendations/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49681 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54266 - "OPTIONS /employees/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54267 - "OPTIONS /employees/1/gap-analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54268 - "OPTIONS /recommendations/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54269 - "OPTIONS /competencies/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54266 - "GET /employees/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54268 - "GET /employees/1/gap-analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54267 - "GET /competencies/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54269 - "GET /recommendations/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54271 - "GET /employees/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54271 - "GET /employees/1/gap-analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54271 - "GET /recommendations/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54271 - "GET /competencies/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51685 - "GET /employees/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51686 - "GET /employees/1/gap-analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51687 - "GET /recommendations/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51685 - "GET /competencies/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51693 - "GET /employees/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51693 - "GET /employees/1/gap-analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51693 - "GET /recommendations/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51693 - "GET /competencies/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60023 - "OPTIONS /auth/login HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:60023 - "OPTIONS /employees/1 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:53958 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53959 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56863 - "OPTIONS /auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56863 - "POST /auth/login HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:56863 - "OPTIONS /employees/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56863 - "GET /employees/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56863 - "OPTIONS /employees/1/gap-analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56863 - "GET /employees/1/gap-analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56865 - "OPTIONS /quizzes/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56865 - "GET /quizzes/1 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50658 - "GET /quizzes/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63401 - "GET /quizzes/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64258 - "OPTIONS /quizzes/1/attempt HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64258 - "POST /quizzes/1/attempt HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64258 - "OPTIONS /assessments/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64258 - "GET /assessments/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63082 - "GET /quizzes/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63083 - "POST /quizzes/1/attempt HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51450 - "OPTIONS /employees/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51451 - "OPTIONS /employees/1/gap-analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51452 - "OPTIONS /recommendations/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51453 - "OPTIONS /competencies/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51450 - "GET /employees/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51452 - "GET /competencies/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51451 - "GET /employees/1/gap-analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51453 - "GET /recommendations/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54549 - "GET /employees/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54549 - "GET /employees/1/gap-analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53555 - "OPTIONS /competencies/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53555 - "GET /competencies/employee/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52784 - "OPTIONS /auth/login HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:52784 - "OPTIONS /employees/1 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:52784 - "OPTIONS /employees/1 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:52784 - "OPTIONS /employees/1 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:52784 - "OPTIONS /employees/1 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:52784 - "OPTIONS /employees/1 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:52784 - "OPTIONS /employees/1 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:52784 - "OPTIONS /competencies/employee/1 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:52784 - "OPTIONS /assessments/generate HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:52784 - "OPTIONS /assessments/generate HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:58963 - "OPTIONS /quizzes/1 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:58963 - "OPTIONS /employees/1 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:58963 - "OPTIONS /employees/1 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:58963 - "OPTIONS /competencies/employee/1 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:51562 - "OPTIONS /employees/1 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:60128 - "OPTIONS /competencies/employee/1 HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:60128 - "OPTIONS /assessments/generate HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:63728 - "GET /health HTTP/1.1" 200 OK

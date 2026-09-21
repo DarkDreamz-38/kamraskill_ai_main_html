@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KarmaSkill — Quiz Result</title>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/karmaskill.css">
+  <style>
+    .result-grid { display: grid; grid-template-columns: 320px 1fr; gap: 1.5rem; align-items: start; }
+    @media (max-width: 900px) { .result-grid { grid-template-columns: 1fr; } }
+    .score-card {
+      background: var(--on-primary-fixed); color: #ffffff;
+      border-radius: var(--radius-lg); padding: 2rem; text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .score-ring {
+      width: 140px; height: 140px; margin: 0 auto 1rem;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: conic-gradient(var(--primary-fixed-dim) 0deg, rgba(255,255,255,0.12) 0deg);
+      transition: background 1s ease;
+    }
+    .score-ring-inner {
+      width: 108px; height: 108px; border-radius: 50%;
+      background: var(--on-primary-fixed);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .score-pct { font-size: 2rem; font-weight: 700; line-height: 1; }
+    .score-of { font-size: 11px; color: var(--primary-fixed-dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    .score-title { font-family: 'Newsreader', Georgia, serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 4px; }
+    .score-sub { font-size: 12px; color: var(--primary-fixed-dim); }
+    .stat-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px;
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-row .k { color: var(--on-surface-variant); }
+    .stat-row .v { font-weight: 700; color: var(--on-surface); }
+    .qresult { padding: 12px 1.25rem; border-bottom: 1px solid #f1f5f9; display: flex; gap: 12px; align-items: flex-start; }
+    .qresult:last-child { border-bottom: none; }
+    .qresult .idx {
+      flex-shrink: 0; width: 28px; height: 28px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+    }
+    .qresult.correct .idx { background: #dcfce7; color: #166534; }
+    .qresult.wrong .idx { background: var(--error-container); color: var(--error); }
+    .qresult.skipped .idx { background: #f1f5f9; color: #475569; }
+    .qresult .body { font-size: 13px; line-height: 1.5; }
+    .qresult .body .qt { font-weight: 600; color: var(--on-surface); margin-bottom: 2px; }
+    .qresult .body .ans { color: var(--on-surface-variant); }
+    .qresult .body .ans strong.ok { color: var(--secondary); }
+    .qresult .body .ans strong.no { color: var(--error); }
+    .offline-note {
+      background: #fef3c7; border: 1px solid #fde68a; color: #b45309;
+      border-radius: var(--radius); padding: 0.75rem 1rem; font-size: 13px; margin-bottom: 1.5rem;
+    }
+    .offline-note.hide, .hide { display: none; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="left">
+      <span>भारत सरकार | Government of India</span>
+    </div>
+    <div class="right">
+      <span>English</span>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <div class="brand">
+          <div class="brand-title">KarmaSkill AI</div>
+          <div class="brand-sub">Public Sector Competency &amp; Learning</div>
+        </div>
+        <nav class="nav" aria-label="Primary">
+          <a href="/index.html">Employee Dashboard</a>
+          <a href="/assessment.html">AI Assessment &amp; Quiz</a>
+          <a class="active" href="#">Result</a>
+        </nav>
+      </div>
+      <div class="header-right">
+        <div class="user-info">
+          <span class="user-name" id="userName">—</span>
+          <span class="user-cadre" id="userCadre">Cadre ID: —</span>
+        </div>
+        <button class="btn-logout" data-logout type="button" title="Logout">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          <span>Logout</span>
+        </button>
+        <div class="avatar" id="avatar">?</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="page-inner">
+      <div class="page-header">
+        <span class="page-eyebrow" id="statusEyebrow">Assessment Result</span>
+        <h1 class="page-title" id="quizTitle">Quiz Result</h1>
+        <p class="page-subtitle" id="quizSub">Grade and review your attempt.</p>
+      </div>
+
+      <div class="offline-note hide" id="offlineNote">
+        <strong>Offline attempt:</strong> the backend was unreachable when you submitted,
+        so this result was not recorded. Return to the dashboard and retry the assessment.
+      </div>
+
+      <div class="result-grid">
+        <div class="stack" style="display:flex;flex-direction:column;gap:1.5rem;">
+          <div class="score-card">
+            <div class="score-ring" id="scoreRing">
+              <div class="score-ring-inner">
+                <div class="score-pct" id="scorePct">—</div>
+                <div class="score-of">Score</div>
+              </div>
+            </div>
+            <div class="score-title" id="verdictTitle">Processing…</div>
+            <div class="score-sub" id="verdictSub">Awaiting your result.</div>
+          </div>
+          <div class="card">
+            <div class="card-body" style="padding-top:0.5rem;padding-bottom:0.5rem;">
+              <div class="stat-row"><span class="k">Correct</span><span class="v" id="statCorrect" style="color:var(--secondary);">—</span></div>
+              <div class="stat-row"><span class="k">Incorrect</span><span class="v" id="statWrong" style="color:var(--error);">—</span></div>
+              <div class="stat-row"><span class="k">Unanswered</span><span class="v" id="statSkipped">—</span></div>
+              <div class="stat-row"><span class="k">Pass Threshold</span><span class="v">75%</span></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-direction:column;">
+            <a class="btn-primary" href="/index.html" style="justify-content:center;">Back to Dashboard</a>
+            <a class="btn-secondary" href="/assessment.html" style="justify-content:center;">Take Another Assessment</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">Question Review</h2>
+              <p class="card-sub">Your answers against the official key.</p>
+            </div>
+            <span class="badge neutral" id="reviewCount">—</span>
+          </div>
+          <div id="reviewList">
+            <div class="qresult"><div class="body">Loading…</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="site-footer">
+        <div class="footer-text">Official Statistical &amp; Competency Framework © 2025 KarmaSkill AI.</div>
+        <div class="footer-links">
+          <span>WCAG 2.1 Level AAA Compliant</span>
+          <span>•</span>
+          <span>DPDP Aligned</span>
+          <span>•</span>
+          <span>Gov.in Sovereign Infrastructure</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/app.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      var stored = KarmaApp.requireAuth();
+      if (!stored) return;
+
+      KarmaApp.renderUserHeader(stored);
+
+      var params = new URLSearchParams(location.search);
+      var quizId = params.get('quizId') || '1';
+      var isOffline = params.get('offline') === '1';
+
+      var passThreshold = 75;
+
+      function setText(id, v) { document.getElementById(id).textContent = v; }
+
+      function pctColor(p) {
+        if (p >= passThreshold) return 'var(--secondary)';
+        if (p >= 50) return '#b45309';
+        return 'var(--error)';
+      }
+
+      function renderResult(res) {
+        var result = res.result || {};
+        var score = result.score || 0;
+        var total = result.total_questions || 0;
+        var pct = Math.round(result.percentage || 0);
+
+        setText('quizTitle', (res.quiz && res.quiz.title) || 'Quiz ' + quizId);
+        setText('quizSub', (res.employee && res.employee.name ? res.employee.name + ' · ' : '') +
+          'Submitted attempt graded automatically.');
+
+        setText('scorePct', pct + '%');
+        setText('statCorrect', score + ' of ' + total);
+        setText('statWrong', '—');
+        setText('statSkipped', '—');
+
+        // Ring fill (conic gradient in degrees)
+        var deg = Math.round(pct / 100 * 360);
+        var ring = document.getElementById('scoreRing');
+        ring.style.background =
+          'conic-gradient(var(--primary-fixed-dim) ' + deg + 'deg, rgba(255,255,255,0.12) ' + deg + 'deg)';
+        setText('verdictTitle', pct >= passThreshold ? 'Certified — Pass' : 'Not Yet Certified');
+        setText('verdictSub', pct >= passThreshold
+          ? 'You met the minimum competency threshold.'
+          : 'Below the ' + passThreshold + '% threshold — more preparation recommended.');
+
+        var questionResults = res.question_results || [];
+        var correct = 0, wrong = 0, skipped = 0;
+        var list = document.getElementById('reviewList');
+        list.innerHTML = questionResults.map(function (qr, i) {
+          var cls;
+          if (qr.your_answer == null) { cls = 'skipped'; skipped++; }
+          else if (qr.correct) { cls = 'correct'; correct++; }
+          else { cls = 'wrong'; wrong++; }
+          return '<div class="qresult ' + cls + '">' +
+            '<div class="idx">' + (i + 1) + '</div>' +
+            '<div class="body">' +
+              '<div class="qt">Question ' + (i + 1) + '</div>' +
+              '<div class="ans">Your answer: ' +
+                (qr.your_answer ? '<strong class="' + (cls === 'correct' ? 'ok' : 'no') + '">' + KarmaApp.escapeHtml(qr.your_answer) + '</strong>' : '<em>Not answered</em>') +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        }).join('') || '<div class="qresult"><div class="body">No detail returned for this attempt.</div></div>';
+
+        setText('statCorrect', correct + ' of ' + total);
+        setText('statWrong', String(wrong));
+        setText('statSkipped', String(skipped));
+        setText('reviewCount', questionResults.length + ' questions');
+
+        var eyebrow = document.getElementById('statusEyebrow');
+        eyebrow.textContent = pct >= passThreshold ? 'Passed' : 'Needs Improvement';
+        eyebrow.style.background = pct >= passThreshold ? '#dcfce7' : 'var(--error-container)';
+        eyebrow.style.color = pct >= passThreshold ? '#166534' : 'var(--error)';
+      }
+
+      if (isOffline) {
+        document.getElementById('offlineNote').classList.remove('hide');
+        setText('verdictTitle', 'Result Not Recorded');
+        setText('verdictSub', 'The backend was unreachable during submission.');
+        document.getElementById('reviewList').innerHTML =
+          '<div class="qresult"><div class="body">Your answers were saved locally. Please retry once the backend is available.</div></div>';
+      } else {
+        // Preferred path: the quiz page stores the live submission response
+        // before redirecting, so we render the exact attempt just graded.
+        var raw = null;
+        try { raw = sessionStorage.getItem('karmaskill_attempt_result'); } catch (e) { /* ignore */ }
+        if (raw) {
+          try { sessionStorage.removeItem('karmaskill_attempt_result'); } catch (e) { /* ignore */ }
+          var attempt = JSON.parse(raw);
+          if (String(attempt.quizId) === String(quizId) && attempt.response) {
+            renderResult(attempt.response);
+            return;
+          }
+        }
+        // Fallback: reconstruct from the employee's assessment history.
+        // The attempt was already recorded at submit time; re-fetch the freshest
+        // data for this quiz via the employee's assessment history.
+        KarmaApp.authFetch('/assessments/employee/' + ((stored && stored.id) || 1))
+          .then(function (list) {
+            var match = (list || []).filter(function (a) {
+              return String(a.competency_id || '') !== '';
+            });
+            var latest = match.length ? match[match.length - 1] : null;
+            if (latest) {
+              renderResult({
+                quiz: { title: 'Assessment #' + quizId },
+                employee: stored,
+                result: {
+                  score: latest.score,
+                  total_questions: latest.total_questions,
+                  percentage: latest.percentage
+                },
+                question_results: []
+              });
+            } else {
+              renderResult({
+                quiz: { title: 'Assessment #' + quizId },
+                employee: stored,
+                result: { score: 0, total_questions: 0, percentage: 0 },
+                question_results: []
+              });
+            }
+          })
+          .catch(function () {
+            setText('verdictTitle', 'Result Unavailable');
+            setText('verdictSub', 'Could not reach the backend to load your result.');
+          });
+      }
+    })();
+  </script>
+</body>
+</html>
