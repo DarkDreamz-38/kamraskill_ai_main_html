@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from database import Base, engine
 
@@ -13,7 +14,6 @@ from routers import quizzes
 
 Base.metadata.create_all(bind=engine)
 
-
 app = FastAPI(
     title="KarmaSkill AI",
     description=(
@@ -22,26 +22,28 @@ app = FastAPI(
     ),
     version="0.1.0"
 )
-from fastapi.middleware.cors import CORSMiddleware
+
+# Configure CORS
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5173",   # Vite default port
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+    "http://localhost:8090",
+    "http://127.0.0.1:8090",
+    "http://localhost:8091",
+    "http://127.0.0.1:8091",
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:8080",
-        "http://127.0.0.1:8080",
-        "http://localhost:8090",
-        "http://127.0.0.1:8090",
-        "http://localhost:8091",
-        "http://127.0.0.1:8091",
-    ],
+    allow_origins=origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",  # matches all Vercel preview/prod deployments
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
 
 app.include_router(auth.router)
 app.include_router(employees.router)
@@ -52,9 +54,9 @@ app.include_router(recommendations.router)
 app.include_router(materials.router)
 app.include_router(quizzes.router)
 
+
 @app.get("/")
 def root():
-
     return {
         "project": "KarmaSkill AI",
         "message": "Competency Gap Engine API",
@@ -64,7 +66,6 @@ def root():
 
 @app.get("/health")
 def health():
-
     return {
         "status": "healthy"
     }
