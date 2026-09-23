@@ -23,7 +23,7 @@ _client = genai.Client(api_key=_API_KEY)
 def generate_text(prompt: str) -> str:
     """Send prompt to Gemini and return the raw text response."""
     interaction = _client.models.generate_content(
-        model="gemini-3.6-flash",
+        model="gemini-2.5-flash",
         contents=prompt
     )
     return interaction.text
